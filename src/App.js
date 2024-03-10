@@ -24,24 +24,12 @@ export default function App() {
     setSelectedID(null);
   }
 
-  useEffect(function () {
-    const existingWatchedList = JSON.parse(localStorage.getItem("watched"));
-
-    if (existingWatchedList) {
-      setWatched(existingWatchedList);
-    }
-  }, []);
-
   function handleAddWatched(movie) {
     setWatched((watched) => [...watched, movie]);
-    localStorage.setItem("watched", JSON.stringify([...watched, movie]));
   }
 
   function handleDeleteWatched(id) {
-    const updatedWatchedList = watched.filter((movie) => movie.imdbID !== id);
-    setWatched(updatedWatchedList);
-
-    localStorage.setItem("watched", JSON.stringify(updatedWatchedList));
+    setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
 
   useEffect(
