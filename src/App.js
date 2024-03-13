@@ -258,6 +258,15 @@ function MovieDetails({ selectedID, onCloseMovie, onAddWatched, watched }) {
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState(0);
 
+  const countRef = useRef(0);
+
+  useEffect(
+    function () {
+      if (userRating) countRef.current++;
+    },
+    [userRating]
+  );
+
   const isWatched = watched.map((movie) => movie.imdbID).includes(selectedID);
 
   const watchedUserRating = watched.find(
@@ -306,6 +315,7 @@ function MovieDetails({ selectedID, onCloseMovie, onAddWatched, watched }) {
       runtime: isNaN(Number(runtime.split(" ").at(0)))
         ? "NA"
         : Number(runtime.split(" ").at(0)),
+      countRatingDecisions: countRef.current,
     };
 
     onAddWatched(newWatchedMovie);
