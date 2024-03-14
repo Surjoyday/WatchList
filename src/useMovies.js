@@ -22,6 +22,8 @@ export function useMovies(query, callback) {
             `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
             {
               signal: controller.signal,
+            },
+            {
               referrerPolicy: "unsafe_url",
             }
           );
