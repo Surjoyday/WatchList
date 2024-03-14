@@ -1,5 +1,5 @@
 # Watchlist Movie App
-
+Check out the live preview of the Watchlist Movie App [here](https://watchlist-kt100.netlify.app/).
 
 
 Watchlist is a movie and series searching web application that provides comprehensive details about movies and series, including:
