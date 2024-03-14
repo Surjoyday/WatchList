@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 
-export function useMovies(apiURL, KEY, query, callback) {
+const KEY = "e1685ece";
+
+export function useMovies(query, callback) {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
   useEffect(
     function () {
       callback?.();
@@ -15,9 +18,12 @@ export function useMovies(apiURL, KEY, query, callback) {
           setIsLoading(true);
           setError("");
 
-          const res = await fetch(`${apiURL}?apikey=${KEY}&s=${query}`, {
-            signal: controller.signal,
-          });
+          const res = await fetch(
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+            {
+              signal: controller.signal,
+            }
+          );
 
           if (!res.ok)
             throw new Error("Something went wrong with fetching movies");
