@@ -9,7 +9,7 @@ export function useMovies(query, callback) {
 
   useEffect(
     function () {
-      callback?.();
+      // callback?.();
 
       const controller = new AbortController();
 
