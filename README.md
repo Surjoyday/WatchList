@@ -1,6 +1,8 @@
-# UsePopcorn Movie App
+# Watchlist Movie App
 
-UsePopcorn is a movie and series searching web application that provides comprehensive details about movies and series, including:
+
+
+Watchlist is a movie and series searching web application that provides comprehensive details about movies and series, including:
 
 - Movie Title
 - Poster Image
@@ -27,7 +29,7 @@ Users can rate their favorite movies and add them to their personalized list. Th
 - NPM
 - JavaScript
 - Create React App
-- OMDb API
+- [OMDb API](https://www.omdbapi.com/)
 
 ## Code Quality
 
@@ -51,6 +53,3 @@ Launches the test runner in the interactive watch mode.
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
----
-
-Feel free to use and contribute to the UsePopcorn Movie App! 🍿🎬
