@@ -9,11 +9,18 @@ const average = (arr) => {
 
 const KEY = "e1685ece";
 
+const apiURL = "http://www.omdbapi.com/";
+
 export default function App() {
   const [query, setQuery] = useState("");
   const [selectedID, setSelectedID] = useState(null);
 
-  const { movies, isLoading, error } = useMovies(query, handleCloseMovie);
+  const { movies, isLoading, error } = useMovies(
+    apiURL,
+    KEY,
+    query,
+    handleCloseMovie
+  );
 
   // const [watched, setWatched] = useState([]);
   const [watched, setWatched] = useState(function () {
