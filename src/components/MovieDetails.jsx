@@ -97,6 +97,15 @@ export default function MovieDetails({
     [selectedID]
   );
 
+  useEffect(
+    function () {
+      document.title = `Movie: ${title}`;
+
+      return () => (document.title = "Watchlist");
+    },
+    [title]
+  );
+
   if (isLoading) return <Loader />;
   if (!isLoading && error !== "") return <ErrorMessage errMsg={error} />;
 
