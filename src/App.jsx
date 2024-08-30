@@ -17,10 +17,8 @@ export default function App() {
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [query, setQuery] = useState("interstellar");
+  const [query, setQuery] = useState("");
   const [selectedID, setSelectedID] = useState("");
-
-  const tempQuery = "interstellar";
 
   /*   
   useEffect(function () {
@@ -67,28 +65,31 @@ export default function App() {
 
   useEffect(
     function () {
-      async function fetchMovies(params) {
+      async function fetchMovies() {
         try {
           setIsLoading(true);
           setError("");
 
           const res = await fetch(
-            `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
           );
 
           if (!res.ok) throw new Error("Failed to load data");
 
           const data = await res.json();
+          // console.log(data);
 
           if (data.Response === "False") {
             throw new Error(data.Error);
           }
 
           setMovies(data.Search);
-          // console.log(data);
+          setError("");
         } catch (err) {
-          // console.error(err);
-          setError(err.message);
+          if (err.name !== "AbortError") {
+            console.log(err.message);
+            setError(err.message);
+          }
         } finally {
           setIsLoading(false);
         }
@@ -99,7 +100,10 @@ export default function App() {
         setError("");
         return;
       }
-      fetchMovies();
+
+      const timerID = setTimeout(fetchMovies, 500);
+
+      return () => clearTimeout(timerID);
     },
     [query]
   );
