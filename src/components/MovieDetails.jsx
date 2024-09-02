@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Loader from "./Loader";
 import ErrorMessage from "./ErrorMessage";
 import StarRating from "./StarRating";
 
-export default function MovieDetails({
+function MovieDetails({
   selectedID,
   onCloseMovie,
   onAddWatched,
@@ -15,9 +15,10 @@ export default function MovieDetails({
   const [error, setError] = useState("");
   const [rating, setRating] = useState(() => {
     const watchedMovie = watched.find((movie) => movie?.imdbID === selectedID);
-
     return watchedMovie?.userRating || 0;
   });
+
+  const countRef = useRef(0);
 
   const [isEditAllowed, setIsEditAllowed] = useState(false);
 
@@ -49,6 +50,7 @@ export default function MovieDetails({
       runtime: parseFloat(runtime),
       imdbRating: Number(imdbRating),
       userRating: Number(rating),
+      timesUserClickRating: countRef.current,
     };
     if (isEditAllowed) {
       onUpdateRating(selectedID, rating);
@@ -64,6 +66,13 @@ export default function MovieDetails({
     setRating(0);
     setIsEditAllowed(true);
   }
+
+  useEffect(
+    function () {
+      if (rating) countRef.current += 1;
+    },
+    [rating]
+  );
 
   useEffect(
     function () {
@@ -84,7 +93,7 @@ export default function MovieDetails({
             throw new Error("Movie Details not available");
 
           setMovie(data);
-          console.log(data);
+          // console.log(data);
         } catch (err) {
           console.log(err.message);
           setError(err.message);
@@ -95,6 +104,24 @@ export default function MovieDetails({
       fetchMovieDetails();
     },
     [selectedID]
+  );
+
+  useEffect(
+    function () {
+      const handleKeyPress = (e) => {
+        if (e.key === "Escape") {
+          // console.log(e);
+          onCloseMovie();
+        }
+      };
+
+      // console.log(document.documentElement);
+
+      document.addEventListener("keydown", handleKeyPress);
+
+      return () => document.removeEventListener("keydown", handleKeyPress);
+    },
+    [onCloseMovie]
   );
 
   useEffect(
@@ -161,3 +188,5 @@ export default function MovieDetails({
     </div>
   );
 }
+
+export default MovieDetails;

@@ -14,34 +14,22 @@ const KEY = import.meta.env.VITE_API_KEY;
 
 export default function App() {
   const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
+  const [watched, setWatched] = useState(() => {
+    const storedWatch = JSON.parse(localStorage.getItem("watched"));
+    return storedWatch.length > 0 ? storedWatch : [];
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [selectedID, setSelectedID] = useState("");
 
-  /*   
-  useEffect(function () {
-    console.log("After Initail Render");
-  }, []);
-
-  useEffect(function () {
-    console.log("After every render");
-  });
-
-  useEffect(
-    function () {
-      console.log("Synchronised with query state variable");
-    },
-    [query]
-  );
-
-  console.log("During render"); 
-  */
-
   function handleSelectedMovie(id) {
     setSelectedID((selectedID) => (selectedID === id ? null : id));
   }
+
+  // const handleCloseMovie = useCallback(() => {
+  //   setSelectedID(null);
+  // }, []);
 
   function handleCloseMovie() {
     setSelectedID(null);
@@ -49,10 +37,22 @@ export default function App() {
 
   function handleAddWatch(watchedMovieData) {
     setWatched((watched) => [...watched, watchedMovieData]);
+
+    // console.log(watched);
+    // localStorage.setItem(
+    //   "watched",
+    //   JSON.stringify([...watched, watchedMovieData])
+    // );
   }
 
   function handleDeleteWatch(id) {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
+
+    // const updatedWatchedList = JSON.parse(
+    //   localStorage.getItem("watched")
+    // ).filter((movie) => movie.imdbID !== id);
+
+    // localStorage.setItem("watched", JSON.stringify(updatedWatchedList));
   }
 
   function handleUpdateRating(id, newRating) {
@@ -61,7 +61,23 @@ export default function App() {
         movie.imdbID === id ? { ...movie, userRating: newRating } : movie
       )
     );
+
+    // const updateRating = JSON.parse(localStorage.getItem("watched")).map(
+    //   (movie) =>
+    //     movie.imdbID === id ? { ...movie, userRating: newRating } : movie
+    // );
+
+    // localStorage.setItem("watched", JSON.stringify(updateRating));
   }
+
+  /// SINCE WE ARE USING AN EFFECT WE DON'T NEED TO SEPARATELY HANDLE THE UPDATED OR DELETE , the useEffect will synchronise the local storage which is a side effect with the "watched" state variable which passed as a dependency
+
+  useEffect(
+    function () {
+      localStorage.setItem("watched", JSON.stringify(watched));
+    },
+    [watched]
+  );
 
   useEffect(
     function () {
@@ -98,8 +114,11 @@ export default function App() {
       if (query.length < 3) {
         setMovies([]);
         setError("");
+        handleCloseMovie();
         return;
       }
+
+      handleCloseMovie();
 
       const timerID = setTimeout(fetchMovies, 500);
 
