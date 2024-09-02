@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import MovieDetails from "./components/MovieDetails";
 import ErrorMessage from "./components/ErrorMessage";
 import Loader from "./components/Loader";
@@ -9,30 +9,39 @@ import { Box } from "./components/Box";
 import { MovieList } from "./components/MovieList";
 import { WatchedSummary } from "./components/WatchedSummary";
 import { WatchedMoviesList } from "./components/WatchedMoviesList";
+import { useMovies } from "./hooks/useMovies";
 
 const KEY = import.meta.env.VITE_API_KEY;
 
+const BASE_URL = "https://www.omdbapi.com/";
+
+const parameter = "s";
+
 export default function App() {
-  const [movies, setMovies] = useState([]);
+  // const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState(() => {
     const storedWatch = JSON.parse(localStorage.getItem("watched"));
     return storedWatch.length > 0 ? storedWatch : [];
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [selectedID, setSelectedID] = useState("");
 
+  const handleCloseMovie = useCallback(() => {
+    setSelectedID(null);
+  }, []);
+
+  const [movies, isLoading, error] = useMovies(
+    BASE_URL,
+    KEY,
+    query,
+    parameter,
+    handleCloseMovie
+  );
+
   function handleSelectedMovie(id) {
     setSelectedID((selectedID) => (selectedID === id ? null : id));
-  }
-
-  // const handleCloseMovie = useCallback(() => {
-  //   setSelectedID(null);
-  // }, []);
-
-  function handleCloseMovie() {
-    setSelectedID(null);
   }
 
   function handleAddWatch(watchedMovieData) {
@@ -79,53 +88,53 @@ export default function App() {
     [watched]
   );
 
-  useEffect(
-    function () {
-      async function fetchMovies() {
-        try {
-          setIsLoading(true);
-          setError("");
+  // useEffect(
+  //   function () {
+  //     async function fetchMovies() {
+  //       try {
+  //         setIsLoading(true);
+  //         setError("");
 
-          const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
-          );
+  //         const res = await fetch(
+  //           `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+  //         );
 
-          if (!res.ok) throw new Error("Failed to load data");
+  //         if (!res.ok) throw new Error("Failed to load data");
 
-          const data = await res.json();
-          // console.log(data);
+  //         const data = await res.json();
+  //         // console.log(data);
 
-          if (data.Response === "False") {
-            throw new Error(data.Error);
-          }
+  //         if (data.Response === "False") {
+  //           throw new Error(data.Error);
+  //         }
 
-          setMovies(data.Search);
-          setError("");
-        } catch (err) {
-          if (err.name !== "AbortError") {
-            console.log(err.message);
-            setError(err.message);
-          }
-        } finally {
-          setIsLoading(false);
-        }
-      }
+  //         setMovies(data.Search);
+  //         setError("");
+  //       } catch (err) {
+  //         if (err.name !== "AbortError") {
+  //           console.log(err.message);
+  //           setError(err.message);
+  //         }
+  //       } finally {
+  //         setIsLoading(false);
+  //       }
+  //     }
 
-      if (query.length < 3) {
-        setMovies([]);
-        setError("");
-        handleCloseMovie();
-        return;
-      }
+  //     if (query.length < 3) {
+  //       setMovies([]);
+  //       setError("");
+  //       handleCloseMovie();
+  //       return;
+  //     }
 
-      handleCloseMovie();
+  //     handleCloseMovie();
 
-      const timerID = setTimeout(fetchMovies, 500);
+  //     const timerID = setTimeout(fetchMovies, 500);
 
-      return () => clearTimeout(timerID);
-    },
-    [query]
-  );
+  //     return () => clearTimeout(timerID);
+  //   },
+  //   [query]
+  // );
 
   return (
     <>
