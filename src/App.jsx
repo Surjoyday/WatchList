@@ -10,6 +10,7 @@ import { MovieList } from "./components/MovieList";
 import { WatchedSummary } from "./components/WatchedSummary";
 import { WatchedMoviesList } from "./components/WatchedMoviesList";
 import { useMovies } from "./hooks/useMovies";
+import { useLocalStorageState } from "./hooks/useLocalStorageState";
 
 const KEY = import.meta.env.VITE_API_KEY;
 
@@ -18,13 +19,6 @@ const BASE_URL = "https://www.omdbapi.com/";
 const parameter = "s";
 
 export default function App() {
-  // const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState(() => {
-    const storedWatch = JSON.parse(localStorage.getItem("watched"));
-    return storedWatch.length > 0 ? storedWatch : [];
-  });
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [selectedID, setSelectedID] = useState("");
 
@@ -39,6 +33,8 @@ export default function App() {
     parameter,
     handleCloseMovie
   );
+
+  const [watched, setWatched] = useLocalStorageState([], "watched");
 
   function handleSelectedMovie(id) {
     setSelectedID((selectedID) => (selectedID === id ? null : id));
