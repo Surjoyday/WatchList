@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useKeyPress } from "../hooks/useKeyPress";
 
 export default function Search({ query, setQuery }) {
   const inputEl = useRef(null);
@@ -7,23 +8,12 @@ export default function Search({ query, setQuery }) {
     inputEl.current.focus();
   }, []);
 
-  /// THE EVENT LISTENER WILL KEEP LISTENING ONCE THE COMPONENT BEACUSE ONCE A LISTNER IS RESGITERED FOR AN EVENT IT KEEPS LISTNEING UNTIL IT IS EXPILICITILY REMOVED
-  useEffect(
-    function () {
-      const handleKeyPress = (e) => {
-        if (document.activeElement === inputEl.current) return;
-
-        if (e.key === "Enter") {
-          inputEl.current.focus();
-          setQuery("");
-        }
-      };
-      document.addEventListener("keydown", handleKeyPress);
-
-      return () => document.removeEventListener("keydown", handleKeyPress);
-    },
-    [setQuery]
-  );
+  // Custom hook to handle "Enter" key press
+  useKeyPress("keydown", "Enter", () => {
+    if (document.activeElement === inputEl.current) return;
+    inputEl.current.focus();
+    setQuery("");
+  });
 
   return (
     <input

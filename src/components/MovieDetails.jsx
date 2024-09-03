@@ -3,6 +3,7 @@ import Loader from "./Loader";
 import ErrorMessage from "./ErrorMessage";
 import StarRating from "./StarRating";
 import { useMovies } from "../hooks/useMovies";
+import { useKeyPress } from "../hooks/useKeyPress";
 
 const KEY = import.meta.env.VITE_API_KEY;
 
@@ -24,7 +25,10 @@ function MovieDetails({
     const watchedMovie = watched.find((movie) => movie?.imdbID === selectedID);
     return watchedMovie?.userRating || 0;
   });
+  const [isEditAllowed, setIsEditAllowed] = useState(false);
+  const countRef = useRef(0);
 
+  // CUSTOM hook for fetching movies
   const [movie, isLoading, error] = useMovies(
     BASE_URL,
     KEY,
@@ -32,11 +36,7 @@ function MovieDetails({
     parameter
   );
 
-  const [isEditAllowed, setIsEditAllowed] = useState(false);
-
   let isWatched = watched.some((movie) => movie.imdbID === selectedID);
-
-  const countRef = useRef(0);
 
   const {
     Title: title,
@@ -88,55 +88,8 @@ function MovieDetails({
     [rating]
   );
 
-  /*   useEffect(
-    function () {
-      async function fetchMovieDetails() {
-        try {
-          setIsLoading(true);
-          setError("");
-          const res = await fetch(
-            `https://www.omdbapi.com/?apikey=${
-              import.meta.env.VITE_API_KEY
-            }&i=${selectedID}`
-          );
-
-          if (!res.ok) throw new Error("500 series error");
-          const data = await res.json();
-
-          if (data.Response === "False")
-            throw new Error("Movie Details not available");
-
-          setMovie(data);
-          // console.log(data);
-        } catch (err) {
-          console.log(err.message);
-          setError(err.message);
-        } finally {
-          setIsLoading(false);
-        }
-      }
-      fetchMovieDetails();
-    },
-    [selectedID]
-  ); */
-
-  useEffect(
-    function () {
-      const handleKeyPress = (e) => {
-        if (e.key === "Escape") {
-          // console.log(e);
-          onCloseMovie();
-        }
-      };
-
-      // console.log(document.documentElement);
-
-      document.addEventListener("keydown", handleKeyPress);
-
-      return () => document.removeEventListener("keydown", handleKeyPress);
-    },
-    [onCloseMovie]
-  );
+  // CUSTOM hook for "ESCAPE" key press
+  useKeyPress("keydown", "escape", onCloseMovie);
 
   useEffect(
     function () {
