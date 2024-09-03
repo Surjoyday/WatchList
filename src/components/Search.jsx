@@ -8,12 +8,27 @@ export default function Search({ query, setQuery }) {
     inputEl.current.focus();
   }, []);
 
-  // Custom hook to handle "Enter" key press
-  useKeyPress("keydown", "Enter", () => {
-    if (document.activeElement === inputEl.current) return;
-    inputEl.current.focus();
-    setQuery("");
-  });
+  // useKeyPress("keydown", "Enter", () => {
+  //   if (document.activeElement === inputEl.current) return;
+  //   inputEl.current.focus();
+  //   setQuery("");
+  // });
+
+  useEffect(
+    function () {
+      const handleKeyPress = (e) => {
+        if (e.key === "Enter") {
+          if (document.activeElement === inputEl.current) return;
+          inputEl.current.focus();
+          setQuery("");
+        }
+      };
+      document.addEventListener("keydown", handleKeyPress);
+
+      return () => document.removeEventListener("keydown", handleKeyPress);
+    },
+    [setQuery]
+  );
 
   return (
     <input

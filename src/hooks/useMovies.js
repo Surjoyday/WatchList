@@ -8,7 +8,7 @@ function useMovies(BASE_URL, KEY, query, parameter, callback, debounceExists) {
 
   useEffect(
     function () {
-      callback?.(null);
+      callback?.();
       async function fetchMovies() {
         try {
           setIsLoading(true);
@@ -36,7 +36,7 @@ function useMovies(BASE_URL, KEY, query, parameter, callback, debounceExists) {
       }
 
       if (query.length < 3) {
-        setIsLoading(false);
+        setMovies([]);
         setError("");
         callback();
         return;
