@@ -43,7 +43,7 @@ function useMovies(BASE_URL, KEY, query, parameter, callback, debounceExists) {
       }
 
       if (debounceExists) {
-        timerRef.current = setTimeout(fetchMovies);
+        timerRef.current = setTimeout(fetchMovies, 500);
       } else {
         fetchMovies();
       }
