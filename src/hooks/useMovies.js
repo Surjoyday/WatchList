@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-function useMovies(BASE_URL, KEY, query, parameter, callback) {
+function useMovies(BASE_URL, KEY, query, parameter, callback, debounceExists) {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -24,7 +24,8 @@ function useMovies(BASE_URL, KEY, query, parameter, callback) {
 
           if (data.Response === "False") throw new Error(data.Error);
 
-          setMovies(data.Search);
+          const resultantData = data.Search ? data.Search : data;
+          setMovies(resultantData);
           setError("");
         } catch (err) {
           console.log(err.message);
@@ -41,11 +42,15 @@ function useMovies(BASE_URL, KEY, query, parameter, callback) {
         return;
       }
 
-      timerRef.current = setTimeout(fetchMovies, 500);
+      if (debounceExists) {
+        timerRef.current = setTimeout(fetchMovies);
+      } else {
+        fetchMovies();
+      }
 
       return () => clearTimeout(timerRef.current);
     },
-    [BASE_URL, KEY, query, callback, parameter]
+    [BASE_URL, KEY, query, callback, parameter, debounceExists]
   );
 
   return [movies, isLoading, error];

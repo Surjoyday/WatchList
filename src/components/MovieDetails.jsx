@@ -2,6 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import Loader from "./Loader";
 import ErrorMessage from "./ErrorMessage";
 import StarRating from "./StarRating";
+import { useMovies } from "../hooks/useMovies";
+
+const KEY = import.meta.env.VITE_API_KEY;
+
+const BASE_URL = "https://www.omdbapi.com/";
+
+const parameter = "i";
 
 function MovieDetails({
   selectedID,
@@ -10,19 +17,26 @@ function MovieDetails({
   onUpdateRating,
   watched,
 }) {
-  const [movie, setMovie] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  // const [movie, setMovie] = useState({});
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [error, setError] = useState("");
   const [rating, setRating] = useState(() => {
     const watchedMovie = watched.find((movie) => movie?.imdbID === selectedID);
     return watchedMovie?.userRating || 0;
   });
 
-  const countRef = useRef(0);
+  const [movie, isLoading, error] = useMovies(
+    BASE_URL,
+    KEY,
+    selectedID,
+    parameter
+  );
 
   const [isEditAllowed, setIsEditAllowed] = useState(false);
 
   let isWatched = watched.some((movie) => movie.imdbID === selectedID);
+
+  const countRef = useRef(0);
 
   const {
     Title: title,
@@ -74,7 +88,7 @@ function MovieDetails({
     [rating]
   );
 
-  useEffect(
+  /*   useEffect(
     function () {
       async function fetchMovieDetails() {
         try {
@@ -104,7 +118,7 @@ function MovieDetails({
       fetchMovieDetails();
     },
     [selectedID]
-  );
+  ); */
 
   useEffect(
     function () {
@@ -133,7 +147,7 @@ function MovieDetails({
     [title]
   );
 
-  if (isLoading) return <Loader />;
+  if (isLoading && error !== "") return <Loader />;
   if (!isLoading && error !== "") return <ErrorMessage errMsg={error} />;
 
   return (

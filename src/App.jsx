@@ -31,7 +31,8 @@ export default function App() {
     KEY,
     query,
     parameter,
-    handleCloseMovie
+    handleCloseMovie,
+    true
   );
 
   const [watched, setWatched] = useLocalStorageState([], "watched");
@@ -75,62 +76,55 @@ export default function App() {
     // localStorage.setItem("watched", JSON.stringify(updateRating));
   }
 
-  /// SINCE WE ARE USING AN EFFECT WE DON'T NEED TO SEPARATELY HANDLE THE UPDATED OR DELETE , the useEffect will synchronise the local storage which is a side effect with the "watched" state variable which passed as a dependency
+  /// SINCE WE ARE USING AN EFFECT WE DON'T NEED TO SEPARATELY HANDLE THE UPDATED OR DELETE which i did an that commented out now, the useEffect will synchronise the local storage which is a side effect with the "watched" state variable which passed as a dependency
 
-  useEffect(
+  /* useEffect(
     function () {
-      localStorage.setItem("watched", JSON.stringify(watched));
+      async function fetchMovies() {
+        try {
+          setIsLoading(true);
+          setError("");
+
+          const res = await fetch(
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+          );
+
+          if (!res.ok) throw new Error("Failed to load data");
+
+          const data = await res.json();
+           console.log(data);
+
+          if (data.Response === "False") {
+            throw new Error(data.Error);
+          }
+
+          setMovies(data.Search);
+          setError("");
+        } catch (err) {
+          if (err.name !== "AbortError") {
+            console.log(err.message);
+            setError(err.message);
+          }
+        } finally {
+          setIsLoading(false);
+        }
+      }
+
+      if (query.length < 3) {
+        setMovies([]);
+        setError("");
+        handleCloseMovie();
+        return;
+      }
+
+      handleCloseMovie();
+
+      const timerID = setTimeout(fetchMovies, 500);
+
+      return () => clearTimeout(timerID);
     },
-    [watched]
-  );
-
-  // useEffect(
-  //   function () {
-  //     async function fetchMovies() {
-  //       try {
-  //         setIsLoading(true);
-  //         setError("");
-
-  //         const res = await fetch(
-  //           `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
-  //         );
-
-  //         if (!res.ok) throw new Error("Failed to load data");
-
-  //         const data = await res.json();
-  //         // console.log(data);
-
-  //         if (data.Response === "False") {
-  //           throw new Error(data.Error);
-  //         }
-
-  //         setMovies(data.Search);
-  //         setError("");
-  //       } catch (err) {
-  //         if (err.name !== "AbortError") {
-  //           console.log(err.message);
-  //           setError(err.message);
-  //         }
-  //       } finally {
-  //         setIsLoading(false);
-  //       }
-  //     }
-
-  //     if (query.length < 3) {
-  //       setMovies([]);
-  //       setError("");
-  //       handleCloseMovie();
-  //       return;
-  //     }
-
-  //     handleCloseMovie();
-
-  //     const timerID = setTimeout(fetchMovies, 500);
-
-  //     return () => clearTimeout(timerID);
-  //   },
-  //   [query]
-  // );
+    [query]
+  ); */
 
   return (
     <>
